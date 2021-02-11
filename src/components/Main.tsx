@@ -1,13 +1,14 @@
-import { spawn } from "child_process";
 import React, { useState } from "react";
 import { Song, SearchResponse } from "./types";
 import "./style.css";
 
 const Main = () => {
   const [data, setData] = useState<Song[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   const fetchSongs = async () => {
+    setIsLoading(true);
     try {
       const response = await fetch(
         `https://deezerdevs-deezer.p.rapidapi.com/search?q=${searchQuery}`,
@@ -23,6 +24,7 @@ const Main = () => {
       if (response.ok) {
         const { data }: SearchResponse = await response.json();
         setData(data);
+        setIsLoading(false);
       }
     } catch (error) {
       console.log(error);
@@ -47,19 +49,26 @@ const Main = () => {
           <button type="submit">Search</button>
         </form>
       </div>
-      <div id="results-container">
-        {data.map((song: Song) => (
-          <div id="results">
+      {data.map((song: Song) =>
+        isLoading ? (
+          <div>Loading...</div>
+        ) : (
+          <div className={song ? "results-success" : "no-results"}>
             <img
               style={{ marginRight: "20px", marginBottom: "20px" }}
               src={song.artist.picture}
               alt="cover"
             />
-            <h4>{song.title}</h4>
-            <h5></h5>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <h3 style={{ color: "rgb(136, 127, 255)" }}>
+                {song.artist.name}
+              </h3>
+              <h4>{song.title}</h4>
+              <h5>From: {song.album.title}</h5>
+            </div>
           </div>
-        ))}
-      </div>
+        )
+      )}
     </div>
   );
 };
