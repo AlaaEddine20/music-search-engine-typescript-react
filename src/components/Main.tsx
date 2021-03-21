@@ -42,7 +42,7 @@ const Main = () => {
 
   return (
     <div id="main-view">
-      <h1>Sputofy</h1>
+      <h1>Search for songs</h1>
       <div id="form-container">
         <form id="form" onSubmit={handleSubmit}>
           <input id="form-input" onChange={handleChange} value={searchQuery} />
